@@ -1,0 +1,52 @@
+<!DOCTYPE html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0b"><title>Shivam ONYX</title>
+<link rel="icon" href="logo.jpg">
+<style>
+:root{--bg:#0b0b0b;--card:#161616;--gold:#d4a84b;--tx:#f2f2f2;--mu:#9a9a9a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,sans-serif;padding:0 0 30px}
+header{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #222}
+header img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
+header h1{font-size:20px;margin:0;color:var(--gold)}
+.w{padding:14px;max-width:520px;margin:auto}
+.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:14px;border:1px solid #242424}
+.live{display:inline-block;font-size:11px;background:#c62828;border-radius:20px;padding:3px 9px;margin-bottom:8px}
+h2{margin:0 0 4px;font-size:22px}.mu{color:var(--mu);font-size:14px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.g div{background:#1d1d1d;border-radius:10px;padding:10px;text-align:center}.g b{display:block;color:var(--gold);font-size:19px}.g span{font-size:12px;color:var(--mu)}
+input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #333;background:#101010;color:var(--tx);font-size:15px}
+button,.btn{display:block;width:100%;text-align:center;text-decoration:none;padding:13px;margin-top:8px;border:0;border-radius:10px;font-size:16px;font-weight:700;background:var(--gold);color:#000}
+.btn.t{background:#229ED9;color:#fff}.btn.p{background:#2e7d32;color:#fff}
+#st{margin-top:8px;font-size:14px}
+</style></head><body>
+<header><img src="logo.jpg" alt=""><h1>Shivam ONYX</h1></header>
+<div class="w">
+<div class="card"><span class="live">● LIVE</span><h2 id="tn">Loading...</h2><div class="mu" id="tm"></div><div class="mu" id="nt"></div>
+<div class="g"><div><b id="ef">-</b><span>Entry Fee</span></div><div><b id="kf">-</b><span>Per Kill</span></div><div><b id="bp">-</b><span>Booyah</span></div><div><b id="bk">-</b><span>Best Player</span></div></div></div>
+<div class="card"><h2 style="font-size:18px">Register</h2>
+<input id="ff" placeholder="Free Fire ID*" inputmode="numeric"><input id="nm" placeholder="Tumhara Naam*"><input id="tg" placeholder="Telegram username*">
+<button onclick="reg()">Register Karo</button><div id="st"></div>
+<a class="btn p" id="pay" style="display:none">Entry Fee Pay Karo (UPI)</a></div>
+<a class="btn t" href="https://t.me/+11YHKadiZ2o0YjY1" target="_blank">Telegram Group Join Karo</a>
+</div>
+<script>
+const DB="https://onyx-3127f-default-rtdb.asia-southeast1.firebasedatabase.app";/* Firebase Realtime DB URL, e.g. https://onyx-xxxx-default-rtdb.firebaseio.com */
+const UPI="kaviya53637@ptaxis",OWNER="Shivam ONYX";
+const $=i=>document.getElementById(i);
+async function get(p){if(DB)return(await fetch(`${DB}/${p}.json`)).json();return JSON.parse(localStorage.getItem("o_"+p.split("/")[0])||"null")}
+async function put(p,v){if(DB){await fetch(`${DB}/${p}.json`,{method:"PUT",body:JSON.stringify(v)});return}
+ const [k,id]=p.split("/");if(!id){localStorage.setItem("o_"+k,JSON.stringify(v));return}
+ const o=JSON.parse(localStorage.getItem("o_"+k)||"{}");o[id]=v;localStorage.setItem("o_"+k,JSON.stringify(o))}
+let cfg={};
+async function load(){try{cfg=(await get("config"))||{};
+ $("tn").textContent=cfg.name||"Tournament jald aa raha hai";
+ $("tm").textContent=[cfg.mode,cfg.date,cfg.time].filter(Boolean).join(" • ");
+ $("nt").textContent=cfg.notice||"";
+ $("ef").textContent="Rs "+(cfg.entry??"-");$("kf").textContent="Rs "+(cfg.kill??"-");$("bp").textContent="Rs "+(cfg.booyah??"-");$("bk").textContent="Rs "+(cfg.best??"-")}catch(e){}}
+async function reg(){const ff=$("ff").value.trim(),nm=$("nm").value.trim(),tg=$("tg").value.trim();
+ if(!ff||!nm||!tg){$("st").textContent="Saari details bharo.";return}
+ try{await put("players/"+ff,{ff,nm,tg,paid:false,t:Date.now()});
+ $("st").textContent="Register ho gaya! Ab entry fee pay karo.";
+ const a=$("pay");a.style.display="block";
+ a.href=`upi://pay?pa=${UPI}&pn=${encodeURIComponent(OWNER)}&am=${cfg.entry||20}&cu=INR&tn=${encodeURIComponent("ONYX "+ff)}`}
+ catch(e){$("st").textContent="Error, dobara try karo."}}
+load();setInterval(load,5000);
+</script></body></html>
